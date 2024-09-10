@@ -9,14 +9,14 @@
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
-		"lint": "next lint"
+		"lint": "next lint",
+		"prettier": "prettier --write \"./src/**/*.{ts,tsx,js,jsx,less,css,scss,html}\" --log-level warn"
 	},
 	"dependencies": {
 		"@pantheon-systems/pds-toolkit-react": "^1.0.0-dev.141",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-prettier": "^5.2.1",
 		"next": "14.2.5",
-		"prettier": "^3.3.3",
 		"prettier-plugin-css-order": "^2.1.2",
 		"react": "^18",
 		"react-dom": "^18"
@@ -27,6 +27,7 @@
 		"@types/react-dom": "^18",
 		"eslint": "^8",
 		"eslint-config-next": "14.2.5",
+		"prettier": "^3.3.3",
 		"typescript": "^5",
 		"vendor-copy": "^3.0.1"
 	}
