@@ -59,8 +59,6 @@ export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 			<h1>Blog {searchTags.length ? ` - ${searchTags.join(', ')}` : ''}</h1>
 
 			{blogArticles.items.map((article) => {
-				let bookmarked = article.sharedUserData?.bookmarked;
-
 				return (
 					<div key={article.sys.id} style={{ marginTop: '4em' }}>
 						<a
@@ -72,7 +70,6 @@ export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 						>
 							<h2 onClick={() => setViewArticleId(article.sys.id ?? null)}>
 								{article.sys.name ?? '<unnamed>'}{' '}
-								{bookmarked ? <IconButton iconName='star' iconSize='md' /> : ''}
 							</h2>
 						</a>
 						{article.fields.topics?.map((topic) => {
