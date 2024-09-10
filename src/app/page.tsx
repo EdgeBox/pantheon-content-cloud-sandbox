@@ -1,11 +1,6 @@
 import Articles from './content/articles';
-import Blog from './content/blog';
+import BlogList from './content/blog-list';
 
 export default function Home() {
-	return (
-		<>
-			<Blog />
-			<Articles />
-		</>
-	);
+	return <>Imagine a fantastic dashboard here!</>;
 }

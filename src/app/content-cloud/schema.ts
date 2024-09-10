@@ -1,5 +1,5 @@
 export type JSON = any;
-export type Timestamp = Date;
+export type Timestamp = string;
 
 export enum HeadlinesBlockOrder {
 	sys_id_ASC = 'sys_id_ASC',

@@ -7,13 +7,17 @@ export const dashboardNavSampleMenuItems = [
 		linkContent: <a href='/'>Home</a>,
 	},
 	{
+		icon: 'paperPlane', //'globe', // 'comment', 'messages'
+		linkContent: <a href='/updates'>Updates</a>,
+		isActive: true,
+	},
+	{
 		icon: 'laptopCode',
 		linkContent: <a href='/sites'>Sites</a>,
 		links: [
 			{ linkContent: <a href='/sites'>Site list</a> },
 			{
 				linkContent: <a href='sites/create-site'>Create new site</a>,
-				isActive: true,
 			},
 			{ linkContent: <a href='/sites/migrate'>Migrate existing site</a> },
 		],
