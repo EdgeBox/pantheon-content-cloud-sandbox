@@ -5,7 +5,6 @@ import { contentCloud } from '../content';
 import { BlogContent } from '../content-cloud/schema';
 import { RestListResponse } from '../content-cloud/rest-client';
 import BlogArticle from './blog-article';
-import { IconButton } from '@pantheon-systems/pds-toolkit-react';
 
 export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 	const [blogArticles, displayBlog] = useState<RestListResponse<
@@ -13,10 +12,13 @@ export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 	> | null>(null);
 	const [viewArticleId, setViewArticleId] = useState<string | null>(null);
 
-	const urlParams = new URLSearchParams(window.location.search);
+	const urlParams =
+		typeof window !== 'undefined'
+			? new URLSearchParams(window.location.search)
+			: null;
 	const searchTags =
 		urlParams
-			.get('tags')
+			?.get('tags')
 			?.split(',')
 			.map((c) => decodeURIComponent(c))
 			.filter((c) => !!c) ?? [];
@@ -28,11 +30,13 @@ export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 				filter: {
 					sys: {
 						//...(searchTags.length ? { assignedTagNames_in: searchTags } : {}),
-						assignedTagNames_in: [
-							'Developer Tools',
-							'Getting Started with Pantheon',
-							...(searchTags.length ? searchTags : []),
-						],
+						assignedTagNames_in: searchTags.length
+							? searchTags
+							: [
+									'Developer Tools',
+									'Getting Started with Pantheon',
+									//...(searchTags.length ? searchTags : []),
+								],
 					},
 				},
 				user_data_types: ['SharedContentUserData'],

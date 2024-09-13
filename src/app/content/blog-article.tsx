@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { contentCloud } from '../content';
-import { BlogContent, SharedContentUserData } from '../content-cloud/schema';
+import { BlogContent } from '../content-cloud/schema';
 import { drupalHtml } from '../content-cloud/content-helpers';
-import { Button, ButtonLink } from '@pantheon-systems/pds-toolkit-react';
+import { Button } from '@pantheon-systems/pds-toolkit-react';
 import Bookmark from './bookmark';
 
 export default function BlogArticle({
@@ -17,7 +17,6 @@ export default function BlogArticle({
 	const [article, displayBlogArticle] = useState<
 		BlogContent<'rest'> | null | 'not-found'
 	>(null);
-	const [bookmarking, setBookmarking] = useState<string | null>(null);
 
 	useEffect(() => {
 		contentCloud
@@ -55,7 +54,7 @@ export default function BlogArticle({
 
 	return (
 		<>
-			<ButtonLink
+			<Button
 				onClick={(e: React.MouseEvent) => {
 					e.preventDefault();
 					back();
@@ -67,8 +66,10 @@ export default function BlogArticle({
 				iconName='arrowLeft'
 				linkContent={<a href='/updates'></a>}
 				className=''
+				label='Back'
+				ariaLabel='Back'
 			/>
-			<h1>{article.sys.name ?? '<unnamed>'}</h1>
+			<h1 style={{ marginTop: '1em' }}>{article.sys.name ?? '<unnamed>'}</h1>
 			<div style={{ margin: '1em 0' }}>
 				<Bookmark content={article} />
 			</div>
