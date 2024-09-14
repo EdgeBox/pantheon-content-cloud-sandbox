@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { contentCloud } from '../content';
+import { contentCloud } from '../app/content';
 import { BlogContent } from '../content-cloud/schema';
 import { drupalHtml } from '../content-cloud/content-helpers';
 import { Button } from '@pantheon-systems/pds-toolkit-react';
@@ -55,10 +55,6 @@ export default function BlogArticle({
 	return (
 		<>
 			<Button
-				onClick={(e: React.MouseEvent) => {
-					e.preventDefault();
-					back();
-				}}
 				displayType='icon-start'
 				disabled={false}
 				variant='secondary'

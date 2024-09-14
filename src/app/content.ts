@@ -1,4 +1,4 @@
-import { RestClient } from './content-cloud/rest-client';
+import { RestClient } from '../content-cloud/rest-client';
 
 export const contentCloud = new RestClient({
 	baseUrl: 'https://3040-edgebox-stack-wdnz22aqd5s.ws-eu116.gitpod.io',

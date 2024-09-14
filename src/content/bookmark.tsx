@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { contentCloud } from '../content';
+import { contentCloud } from '../app/content';
 import { BlogContent, SharedContentUserData } from '../content-cloud/schema';
 import { Button } from '@pantheon-systems/pds-toolkit-react';
 

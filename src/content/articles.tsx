@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { contentCloud } from '../content';
+import { contentCloud } from '../app/content';
 import { ArticleContent, SharedContentUserData } from '../content-cloud/schema';
 import { RestListResponse } from '../content-cloud/rest-client';
 import { drupalHtml } from '../content-cloud/content-helpers';
