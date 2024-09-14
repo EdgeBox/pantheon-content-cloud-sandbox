@@ -5,14 +5,12 @@ import { contentCloud } from '../app/content';
 import { BlogContent, BlogContentOrder } from '../content-cloud/schema';
 import { RestListResponse } from '../content-cloud/rest-client';
 import { InputText } from '@pantheon-systems/pds-toolkit-react';
-import BlogArticle from './blog-article';
 
 let request = 0;
 export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 	const [blogArticles, displayBlog] = useState<RestListResponse<
 		BlogContent<'rest'>
 	> | null>(null);
-	const [viewArticleId, setViewArticleId] = useState<string | null>(null);
 	const [search, setSearch] = useState<string>('');
 
 	const urlParams =
@@ -80,12 +78,6 @@ export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 		return <div>loading...</div>;
 	}
 
-	if (viewArticleId) {
-		return (
-			<BlogArticle id={viewArticleId} back={() => setViewArticleId(null)} />
-		);
-	}
-
 	return (
 		<>
 			<h1>
@@ -110,16 +102,8 @@ export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 			{blogArticles.items.map((article) => {
 				return (
 					<div key={article.sys.id} style={{ marginTop: '4em' }}>
-						<a
-							href={`/updates/${article.sys.id}`}
-							onClick={(e) => {
-								e.preventDefault();
-								setViewArticleId(article.sys.id ?? null);
-							}}
-						>
-							<h2 onClick={() => setViewArticleId(article.sys.id ?? null)}>
-								{article.sys.name ?? '<unnamed>'}{' '}
-							</h2>
+						<a href={`/updates/${article.sys.id}`}>
+							<h2>{article.sys.name ?? '<unnamed>'} </h2>
 						</a>
 						{article.fields.topics?.map((topic) => {
 							return (

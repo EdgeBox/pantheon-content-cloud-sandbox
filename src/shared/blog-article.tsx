@@ -6,14 +6,9 @@ import { BlogContent } from '../content-cloud/schema';
 import { drupalHtml } from '../content-cloud/content-helpers';
 import { Button } from '@pantheon-systems/pds-toolkit-react';
 import Bookmark from './bookmark';
+import { useRouter } from 'next/navigation';
 
-export default function BlogArticle({
-	id,
-	back,
-}: {
-	id: string;
-	back: () => void;
-}) {
+export default function BlogArticle({ id }: { id: string }) {
 	const [article, displayBlogArticle] = useState<
 		BlogContent<'rest'> | null | 'not-found'
 	>(null);
@@ -52,15 +47,17 @@ export default function BlogArticle({
 		return <div>Not found :(</div>;
 	}
 
+	const router = useRouter();
+
 	return (
 		<>
 			<Button
+				onClick={() => router.back()}
 				displayType='icon-start'
 				disabled={false}
 				variant='secondary'
 				size='md'
 				iconName='arrowLeft'
-				linkContent={<a href='/updates'></a>}
 				className=''
 				label='Back'
 				ariaLabel='Back'
