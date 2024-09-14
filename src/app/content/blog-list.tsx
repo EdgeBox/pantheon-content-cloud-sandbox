@@ -1,8 +1,8 @@
 'use client';
 
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { contentCloud } from '../content';
-import { BlogContent } from '../content-cloud/schema';
+import { BlogContent, BlogContentOrder } from '../content-cloud/schema';
 import { RestListResponse } from '../content-cloud/rest-client';
 import { InputText } from '@pantheon-systems/pds-toolkit-react';
 import BlogArticle from './blog-article';
@@ -46,7 +46,25 @@ export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 					},
 				},
 				user_data_types: ['SharedContentUserData'],
-				include: 5,
+				include: 0,
+				order:
+					mode === 'history'
+						? [BlogContentOrder.sys_sharedUserData_readAt_DESC]
+						: undefined,
+				user_data_filter:
+					mode === 'history'
+						? {
+								SharedContentUserData: {
+									readAt_gt: new Date(0).toISOString(),
+								},
+							}
+						: mode === 'bookmarks'
+							? {
+									SharedContentUserData: {
+										bookmarked: true,
+									},
+								}
+							: undefined,
 			})
 			.then((response) => {
 				if (expectedRequest !== request) {
@@ -70,7 +88,14 @@ export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 
 	return (
 		<>
-			<h1>Blog {searchTags.length ? ` - ${searchTags.join(', ')}` : ''}</h1>
+			<h1>
+				Blog {searchTags.length ? ` - ${searchTags.join(', ')}` : ''}
+				{mode === 'bookmarks'
+					? ' - Bookmarks'
+					: mode === 'history'
+						? ' - History'
+						: ''}
+			</h1>
 
 			<InputText
 				id='article-search'
@@ -78,9 +103,6 @@ export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 				showLabel={false}
 				type='search'
 				hasClearButton
-				onClear={() => {
-					setSearch('');
-				}}
 				onChange={(text: string) => setSearch(text)}
 				value={search}
 			/>
