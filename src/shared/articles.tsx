@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { contentCloud } from './content';
 import { ArticleContent, SharedContentUserData } from '../content-cloud/schema';
 import { RestListResponse } from '../content-cloud/rest-client';
-import { drupalHtml } from '../content-cloud/content-helpers';
+import { formatDrupalHtml } from '../content-cloud/content-formatters';
 
 export default function Articles() {
 	const [articles, displayArticles] = useState<RestListResponse<
@@ -82,7 +82,7 @@ export default function Articles() {
 						</div>
 						<div
 							dangerouslySetInnerHTML={{
-								__html: drupalHtml(article.fields.body),
+								__html: formatDrupalHtml(article.fields.body),
 							}}
 						/>
 					</div>

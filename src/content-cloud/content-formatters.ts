@@ -5,7 +5,7 @@ import {
 	TextWithSummaryProperty,
 } from './schema';
 
-export function drupalHtml(
+export function formatDrupalHtml(
 	field?: TextLongProperty<'rest'> | TextWithSummaryProperty<'rest'> | null,
 	options?: {
 		preferSummary?: boolean;

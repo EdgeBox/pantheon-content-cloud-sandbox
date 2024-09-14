@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { contentCloud } from './content';
 import { BlogContent } from '../content-cloud/schema';
-import { drupalHtml } from '../content-cloud/content-helpers';
+import { formatDrupalHtml } from '../content-cloud/content-formatters';
 import { Button } from '@pantheon-systems/pds-toolkit-react';
 import Bookmark from './bookmark';
 import { useRouter } from 'next/navigation';
@@ -68,7 +68,7 @@ export default function BlogArticle({ id }: { id: string }) {
 			</div>
 			<div
 				dangerouslySetInnerHTML={{
-					__html: drupalHtml(article.fields.body, {
+					__html: formatDrupalHtml(article.fields.body, {
 						imageSize: 'original',
 					}),
 				}}
