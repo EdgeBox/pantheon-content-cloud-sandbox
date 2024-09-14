@@ -27,6 +27,8 @@ export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 	useEffect(() => {
 		const expectedRequest = ++request;
 
+		displayBlog(null);
+
 		contentCloud
 			.contentCollection({
 				content_type: 'BlogContent',
@@ -74,9 +76,35 @@ export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 			});
 	}, [search]);
 
-	if (!blogArticles) {
-		return <div>loading...</div>;
-	}
+	const content = blogArticles ? (
+		<>
+			{blogArticles.items.map((article) => {
+				return (
+					<div key={article.sys.id} style={{ marginTop: '4em' }}>
+						<a href={`/updates/${article.sys.id}`}>
+							<h2>{article.sys.name ?? '<unnamed>'} </h2>
+						</a>
+						{article.fields.topics?.map((topic) => {
+							return (
+								<a
+									key={topic.sys.id}
+									style={{ marginRight: '1em' }}
+									href={`?tags=${(searchTags.includes(topic.sys.name!) ? searchTags.filter((c) => c !== topic.sys.name) : [...searchTags, topic.sys.name!]).map((c) => encodeURIComponent(c))}`}
+								>
+									{topic.sys.name}
+								</a>
+							);
+						})}
+					</div>
+				);
+			})}
+			<p style={{ marginTop: '2em' }}>
+				<em>Total: {blogArticles.total} articles</em>
+			</p>
+		</>
+	) : (
+		<div style={{ marginTop: '2em' }}>loading...</div>
+	);
 
 	return (
 		<>
@@ -99,30 +127,7 @@ export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 				value={search}
 			/>
 
-			{blogArticles.items.map((article) => {
-				return (
-					<div key={article.sys.id} style={{ marginTop: '4em' }}>
-						<a href={`/updates/${article.sys.id}`}>
-							<h2>{article.sys.name ?? '<unnamed>'} </h2>
-						</a>
-						{article.fields.topics?.map((topic) => {
-							return (
-								<a
-									key={topic.sys.id}
-									style={{ marginRight: '1em' }}
-									href={`?tags=${(searchTags.includes(topic.sys.name!) ? searchTags.filter((c) => c !== topic.sys.name) : [...searchTags, topic.sys.name!]).map((c) => encodeURIComponent(c))}`}
-								>
-									{topic.sys.name}
-								</a>
-							);
-						})}
-					</div>
-				);
-			})}
-
-			<p style={{ marginTop: '2em' }}>
-				<em>Total: {blogArticles.total} articles</em>
-			</p>
+			{content}
 		</>
 	);
 }
