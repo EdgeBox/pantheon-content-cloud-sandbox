@@ -23,8 +23,7 @@ import {
 
 import '../../node_modules/@pantheon-systems/pds-toolkit-react/_dist/css/pds-core.css';
 
-// TODOS:
-// Get active workspace from the url and assign it to the workspaceItems as the active workspace.
+import './styles.css';
 
 export default function RootLayout({
 	children,

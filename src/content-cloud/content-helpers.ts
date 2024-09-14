@@ -1,4 +1,9 @@
-import { TextLongProperty, TextWithSummaryProperty } from './schema';
+import {
+	File,
+	ImageMedia,
+	TextLongProperty,
+	TextWithSummaryProperty,
+} from './schema';
 
 export function drupalHtml(
 	field?: TextLongProperty<'rest'> | TextWithSummaryProperty<'rest'> | null,
@@ -6,6 +11,12 @@ export function drupalHtml(
 		preferSummary?: boolean;
 		defaultValue?: any;
 		imageNotFoundUrl?: string;
+		imageSize?:
+			| {
+					width?: number;
+					height?: number;
+			  }
+			| 'original';
 	},
 ) {
 	const content =
@@ -23,6 +34,37 @@ export function drupalHtml(
 
 	const urlMappings: Map<string, string> = new Map<string, string>();
 	for (const embed of field?.fields.embedded ?? []) {
+		const media = embed as ImageMedia<'rest'> | undefined;
+		const image = media?.fields.mediaImage as File<'rest'> | undefined;
+		const internalUrl = image?.fields.uri;
+		let externalUrl = (image as any)?.asset.embedUrl;
+
+		if (internalUrl && externalUrl) {
+			const imageSize = options?.imageSize;
+			if (imageSize === 'original') {
+				externalUrl = externalUrl
+					.replace(/image_height=\d+/, '')
+					.replace(/image_width=\d+/, '');
+			} else if (imageSize?.width) {
+				externalUrl = externalUrl.replace(
+					/image_width=\d+/,
+					`image_width=${imageSize.width}`,
+				);
+				if (imageSize?.height) {
+					externalUrl = externalUrl.replace(
+						/image_height=\d+/,
+						`image_height=${imageSize.height}`,
+					);
+				} else {
+					externalUrl = externalUrl.replace(/image_height=\d+/, '');
+				}
+			} else if (imageSize?.height) {
+				externalUrl = externalUrl
+					.replace(/image_height=\d+/, `image_height=${imageSize.height}`)
+					.replace(/image_width=\d+/, '');
+			}
+			urlMappings.set(internalUrl.replace(/^[a-z-0-9]+:\/\//, ''), externalUrl);
+		}
 	}
 
 	return content.replace(
@@ -36,8 +78,14 @@ export function drupalHtml(
 				return match;
 			}
 
-			const assetUrl = urlMappings.get(localUrl);
-			return `${attribute}="${assetUrl ?? options?.imageNotFoundUrl}"`;
+			const path = decodeURIComponent(localUrl.split('?')[0]);
+			const existing = [...urlMappings.keys()].find((c) => path.endsWith(c));
+
+			const assetUrl = existing && urlMappings.get(existing);
+
+			//console.log(path, existing, assetUrl, urlMappings);
+
+			return `${attribute}="${assetUrl ?? options?.imageNotFoundUrl ?? ''}"`;
 		},
 	);
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { contentCloud } from '../app/content';
+import { contentCloud } from './content';
 import { BlogContent } from '../content-cloud/schema';
 import { drupalHtml } from '../content-cloud/content-helpers';
 import { Button } from '@pantheon-systems/pds-toolkit-react';
@@ -68,7 +68,9 @@ export default function BlogArticle({ id }: { id: string }) {
 			</div>
 			<div
 				dangerouslySetInnerHTML={{
-					__html: drupalHtml(article.fields.body),
+					__html: drupalHtml(article.fields.body, {
+						imageSize: 'original',
+					}),
 				}}
 			/>
 		</>

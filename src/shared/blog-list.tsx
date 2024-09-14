@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { contentCloud } from '../app/content';
+import { contentCloud } from './content';
 import { BlogContent, BlogContentOrder } from '../content-cloud/schema';
 import { RestListResponse } from '../content-cloud/rest-client';
 import { InputText } from '@pantheon-systems/pds-toolkit-react';
