@@ -51,6 +51,8 @@ export interface RestRequestOptions {
 
 	user_data_types?: (keyof RestContentUserDataTypes)[];
 	//revision_type?: "latest" | "published";
+
+	query?: string;
 }
 export type RestSelectField<Properties extends string> =
 	| `sys.${keyof RestSystemMetadata}`
@@ -205,6 +207,9 @@ export class RestClient {
 			}
 			if (options.order) {
 				params.push(['order', options.order.join(',')]);
+			}
+			if (options.query) {
+				params.push(['query', options.query]);
 			}
 
 			if (options.filter) {

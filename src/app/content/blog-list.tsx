@@ -1,16 +1,19 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { contentCloud } from '../content';
 import { BlogContent } from '../content-cloud/schema';
 import { RestListResponse } from '../content-cloud/rest-client';
+import { InputText } from '@pantheon-systems/pds-toolkit-react';
 import BlogArticle from './blog-article';
 
+let request = 0;
 export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 	const [blogArticles, displayBlog] = useState<RestListResponse<
 		BlogContent<'rest'>
 	> | null>(null);
 	const [viewArticleId, setViewArticleId] = useState<string | null>(null);
+	const [search, setSearch] = useState<string>('');
 
 	const urlParams =
 		typeof window !== 'undefined'
@@ -24,9 +27,12 @@ export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 			.filter((c) => !!c) ?? [];
 
 	useEffect(() => {
+		const expectedRequest = ++request;
+
 		contentCloud
 			.contentCollection({
 				content_type: 'BlogContent',
+				query: search,
 				filter: {
 					sys: {
 						//...(searchTags.length ? { assignedTagNames_in: searchTags } : {}),
@@ -43,10 +49,14 @@ export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 				include: 5,
 			})
 			.then((response) => {
+				if (expectedRequest !== request) {
+					console.log('Request cancelled');
+					return;
+				}
 				console.log('Blog', response);
 				displayBlog(response);
 			});
-	}, []);
+	}, [search]);
 
 	if (!blogArticles) {
 		return <div>loading...</div>;
@@ -61,6 +71,19 @@ export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 	return (
 		<>
 			<h1>Blog {searchTags.length ? ` - ${searchTags.join(', ')}` : ''}</h1>
+
+			<InputText
+				id='article-search'
+				label='Search'
+				showLabel={false}
+				type='search'
+				hasClearButton
+				onClear={() => {
+					setSearch('');
+				}}
+				onChange={(text: string) => setSearch(text)}
+				value={search}
+			/>
 
 			{blogArticles.items.map((article) => {
 				return (

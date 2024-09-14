@@ -10,6 +10,13 @@ export const dashboardNavSampleMenuItems = [
 		icon: 'paperPlane', //'globe', // 'comment', 'messages'
 		linkContent: <a href='/updates'>Updates</a>,
 		isActive: true,
+		links: [
+			{ linkContent: <a href='/updates'>All</a> },
+			{
+				linkContent: <a href='/updates/bookmarked'>Bookmarked</a>,
+			},
+			{ linkContent: <a href='/updates/reading-history'>Reading history</a> },
+		],
 	},
 	{
 		icon: 'laptopCode',
@@ -17,7 +24,7 @@ export const dashboardNavSampleMenuItems = [
 		links: [
 			{ linkContent: <a href='/sites'>Site list</a> },
 			{
-				linkContent: <a href='sites/create-site'>Create new site</a>,
+				linkContent: <a href='/sites/create-site'>Create new site</a>,
 			},
 			{ linkContent: <a href='/sites/migrate'>Migrate existing site</a> },
 		],
