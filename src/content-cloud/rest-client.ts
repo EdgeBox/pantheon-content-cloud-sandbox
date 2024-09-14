@@ -94,13 +94,33 @@ export type TypedRestRequestOptions<TypeName extends keyof RestContentTypes> =
 interface RestClientOptions {
 	baseUrl: string;
 	token: string;
-	spaceId: string;
+	spaceId?: string;
 	environmentId?: string;
 	fetch?: typeof fetch;
 }
 
+/// @see https://stackoverflow.com/a/38552302
+function parseJwt(token: string) {
+	var base64Url = token.split('.')[1];
+	var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+	var jsonPayload = decodeURIComponent(
+		window
+			.atob(base64)
+			.split('')
+			.map(function (c) {
+				return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+			})
+			.join(''),
+	);
+
+	return JSON.parse(jsonPayload);
+}
+
 export class RestClient {
-	constructor(protected readonly options: RestClientOptions) {
+	constructor(
+		protected readonly options: RestClientOptions,
+		protected readonly token = parseJwt(options.token),
+	) {
 		if (!this.options.baseUrl) {
 			throw new Error('baseUrl is required for RestClient.');
 		}
@@ -110,8 +130,20 @@ export class RestClient {
 		if (!this.options.token) {
 			throw new Error('token is required for RestClient.');
 		}
+
 		if (!this.options.spaceId) {
-			throw new Error('spaceId is required for RestClient.');
+			if (token.spaceId) {
+				this.options.spaceId = token.spaceId;
+			} else {
+				throw new Error('spaceId is required for RestClient.');
+			}
+		}
+		if (!this.options.environmentId) {
+			if (token.environmentIds?.length) {
+				this.options.environmentId = token.environmentIds[0];
+			} else {
+				throw new Error('environmentId is required for RestClient.');
+			}
 		}
 	}
 
@@ -163,10 +195,6 @@ export class RestClient {
 		type: TypeName,
 		data: RestContentUserDataTypes[TypeName]['Properties'],
 	): Promise<RestContentUserDataTypes[TypeName]['Properties']> {
-		if (!this.options.environmentId) {
-			throw new Error('environmentId is required for setting user data.');
-		}
-
 		return await this.post(
 			`/spaces/${this.options.spaceId}/${this.options.environmentId}/entries/${contentId}/user_data/${type}`,
 			data,
@@ -347,10 +375,6 @@ export class RestClient {
 				for (const [name, filter] of Object.entries(options.user_data_filter)) {
 					addFilters(`user_data.${name}`, filter);
 				}
-			}
-
-			if (!this.options.environmentId) {
-				throw new Error('environmentId is required for requesting content.');
 			}
 		}
 
