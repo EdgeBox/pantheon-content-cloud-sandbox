@@ -8,9 +8,8 @@ import { InputText } from '@pantheon-systems/pds-toolkit-react';
 
 let request = 0;
 export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
-	const [blogArticles, displayBlog] = useState<RestListResponse<
-		BlogContent<'rest'>
-	> | null>(null);
+	const [blogArticles, displayBlog] =
+		useState<RestListResponse<BlogContent> | null>(null);
 	const [search, setSearch] = useState<string>('');
 
 	const urlParams =
@@ -33,7 +32,20 @@ export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 			.contentCollection({
 				content_type: 'BlogContent',
 				query: search,
-				filter: {
+				...(searchTags.length
+					? {
+							metadata: {
+								tags: {
+									sys: {
+										name: {
+											in: searchTags,
+										},
+									},
+								},
+							},
+						}
+					: {}),
+				/*filter: {
 					sys: {
 						//...(searchTags.length ? { assignedTagNames_in: searchTags } : {}),
 						assignedTagNames_in: searchTags.length
@@ -44,23 +56,25 @@ export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 									//...(searchTags.length ? searchTags : []),
 								],
 					},
-				},
-				user_data_types: ['SharedContentUserData'],
-				include: 0,
+				},*/
+				user_data_types: ['FlagsContentUserData'],
+				include: 1,
 				order:
 					mode === 'history'
-						? [BlogContentOrder.sys_sharedUserData_readAt_DESC]
+						? ['-user_data.FlagsContentUserData.readAt']
 						: undefined,
 				user_data_filter:
 					mode === 'history'
 						? {
-								SharedContentUserData: {
-									readAt_gt: new Date(0).toISOString(),
+								FlagsContentUserData: {
+									readAt: {
+										gt: new Date(0).toISOString(),
+									},
 								},
 							}
 						: mode === 'bookmarks'
 							? {
-									SharedContentUserData: {
+									FlagsContentUserData: {
 										bookmarked: true,
 									},
 								}
@@ -72,7 +86,7 @@ export default function BlogList({ mode }: { mode?: 'bookmarks' | 'history' }) {
 					return;
 				}
 				console.log('Blog', response);
-				displayBlog(response);
+				displayBlog(response as RestListResponse<BlogContent>);
 			});
 	}, [search]);
 

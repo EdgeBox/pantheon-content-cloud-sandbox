@@ -6,7 +6,7 @@ import {
 } from './schema';
 
 export function formatDrupalHtml(
-	field?: TextLongProperty<'rest'> | TextWithSummaryProperty<'rest'> | null,
+	field?: TextLongProperty | TextWithSummaryProperty | null,
 	options?: {
 		preferSummary?: boolean;
 		defaultValue?: any;
@@ -21,11 +21,10 @@ export function formatDrupalHtml(
 ) {
 	const content =
 		(options?.preferSummary
-			? (field as TextWithSummaryProperty<'rest'> | undefined)?.fields
-					.summary || null
+			? (field as TextWithSummaryProperty | undefined)?.summary || null
 			: null) ??
-		field?.fields.processed ??
-		field?.fields.value;
+		field?.processed ??
+		field?.value;
 	if (!content) {
 		return options && Object.hasOwn(options, 'defaultValue')
 			? options.defaultValue
@@ -33,10 +32,10 @@ export function formatDrupalHtml(
 	}
 
 	const urlMappings: Map<string, string> = new Map<string, string>();
-	for (const embed of field?.fields.embedded ?? []) {
-		const media = embed as ImageMedia<'rest'> | undefined;
-		const image = media?.fields.mediaImage as File<'rest'> | undefined;
-		const internalUrl = image?.fields.uri;
+	for (const embed of field?.embedded ?? []) {
+		const media = embed as ImageMedia | undefined;
+		const image = media?.mediaImage as File | undefined;
+		const internalUrl = image?.uri;
 		let externalUrl = (image as any)?.asset.embedUrl;
 
 		if (internalUrl && externalUrl) {
@@ -69,7 +68,7 @@ export function formatDrupalHtml(
 
 	return content.replace(
 		/(srcset|src)="([^"]+)(\?[^"]*)?"/g,
-		(match, attribute, localUrl) => {
+		(match: string, attribute: string, localUrl: string) => {
 			if (
 				localUrl.startsWith('http://') ||
 				localUrl.startsWith('https://') ||

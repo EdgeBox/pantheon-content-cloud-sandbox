@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 
 export default function BlogArticle({ id }: { id: string }) {
 	const [article, displayBlogArticle] = useState<
-		BlogContent<'rest'> | null | 'not-found'
+		BlogContent | null | 'not-found'
 	>(null);
 
 	useEffect(() => {
@@ -22,7 +22,7 @@ export default function BlogArticle({ id }: { id: string }) {
 						id,
 					},
 				},
-				user_data_types: ['SharedContentUserData'],
+				user_data_types: ['FlagsContentUserData'],
 				include: 5,
 			})
 			.then((response) => {
@@ -33,7 +33,7 @@ export default function BlogArticle({ id }: { id: string }) {
 				response.items[0]?.sys.id &&
 					contentCloud.setContentUserData(
 						response.items[0].sys.id,
-						'SharedContentUserData',
+						'FlagsContentUserData',
 						{ readAt: new Date().toISOString() },
 					);
 			});

@@ -2,14 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { contentCloud } from './content';
-import { ArticleContent, SharedContentUserData } from '../content-cloud/schema';
+import { ArticleContent, FlagsContentUserData } from '../content-cloud/schema';
 import { RestListResponse } from '../content-cloud/rest-client';
 import { formatDrupalHtml } from '../content-cloud/content-formatters';
 
 export default function Articles() {
-	const [articles, displayArticles] = useState<RestListResponse<
-		ArticleContent<'rest'>
-	> | null>(null);
+	const [articles, displayArticles] =
+		useState<RestListResponse<ArticleContent> | null>(null);
 	const [bookmarking, setBookmarking] = useState<string | null>(null);
 
 	useEffect(() => {
@@ -21,7 +20,7 @@ export default function Articles() {
           assignedTagNames_in: ["Developer Tools"],
         },
       },*/
-				user_data_types: ['SharedContentUserData'],
+				user_data_types: ['FlagsContentUserData'],
 				include: 5,
 				filter: {},
 			})
@@ -40,7 +39,7 @@ export default function Articles() {
 			<h1>Articles</h1>
 
 			{articles.items.map((article) => {
-				let bookmarked = article.sharedUserData?.bookmarked;
+				let bookmarked = article.flagsUserData?.fields.bookmarked;
 
 				return (
 					<div key={article.sys.id}>
@@ -57,14 +56,16 @@ export default function Articles() {
 									setBookmarking((bookmarked ? '+' : '-') + article.sys.id);
 									const result = await contentCloud.setContentUserData(
 										article.sys.id!,
-										'SharedContentUserData',
+										'FlagsContentUserData',
 										{ bookmarked },
 									);
 
-									article.sharedUserData = {
-										...(article.sharedUserData ||
-											({} as SharedContentUserData<'rest'>)),
-										bookmarked: !!result.bookmarked,
+									article.flagsUserData = {
+										...(article.flagsUserData || ({} as FlagsContentUserData)),
+										fields: {
+											...(article.flagsUserData?.fields ?? {}),
+											bookmarked: !!result.fields.bookmarked,
+										},
 									};
 
 									displayArticles({ ...articles, items: [...articles.items] });

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { contentCloud } from './content';
-import { BlogContent, SharedContentUserData } from '../content-cloud/schema';
+import { BlogContent, FlagsContentUserData } from '../content-cloud/schema';
 import { Button } from '@pantheon-systems/pds-toolkit-react';
 
 type BookmarkState = 'bookmarked' | 'not-bookmarked' | 'adding' | 'removing';
@@ -16,32 +16,34 @@ const BOOKMARK_STATE_LABELS: { [key in BookmarkState]: string } = {
 export default function Bookmark({
 	content: contentIn,
 }: {
-	content: BlogContent<'rest'>;
+	content: BlogContent;
 }) {
-	const [article, displayBlogArticle] =
-		useState<BlogContent<'rest'>>(contentIn);
+	const [article, displayBlogArticle] = useState<BlogContent>(contentIn);
 	const [bookmarkState, setBookmarkState] = useState<BookmarkState>(
-		article.sharedUserData?.bookmarked ? 'bookmarked' : 'not-bookmarked',
+		article.flagsUserData?.fields.bookmarked ? 'bookmarked' : 'not-bookmarked',
 	);
 
 	const bookmarkLabel = BOOKMARK_STATE_LABELS[bookmarkState];
 
-	async function toggleBookmark(article: BlogContent<'rest'>) {
+	async function toggleBookmark(article: BlogContent) {
 		const bookmarked = bookmarkState !== 'bookmarked';
 
 		setBookmarkState(bookmarked ? 'adding' : 'removing');
 
 		const result = await contentCloud.setContentUserData(
 			article.sys.id!,
-			'SharedContentUserData',
+			'FlagsContentUserData',
 			{ bookmarked },
 		);
 
 		displayBlogArticle({
 			...article,
-			sharedUserData: {
-				...(article.sharedUserData || ({} as SharedContentUserData<'rest'>)),
-				bookmarked: !!result.bookmarked,
+			flagsUserData: {
+				...(article.flagsUserData || ({} as FlagsContentUserData)),
+				fields: {
+					...(article.flagsUserData?.fields || {}),
+					bookmarked: !!result.fields.bookmarked,
+				},
 			},
 		});
 

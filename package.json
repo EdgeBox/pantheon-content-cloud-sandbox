@@ -16,12 +16,14 @@
 		"@pantheon-systems/pds-toolkit-react": "^1.0.0-dev.141",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-prettier": "^5.2.1",
+		"jsonwebtoken": "^9.0.2",
 		"next": "14.2.5",
 		"prettier-plugin-css-order": "^2.1.2",
 		"react": "^18",
 		"react-dom": "^18"
 	},
 	"devDependencies": {
+		"@types/jsonwebtoken": "^9.0.9",
 		"@types/node": "^20",
 		"@types/react": "^18",
 		"@types/react-dom": "^18",
